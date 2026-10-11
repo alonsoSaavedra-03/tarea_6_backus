@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "nombre": "Cristal 620 ml",
+    "categoria": "Cerveza",
+    "precio": 3.40,
+    "stock": 120,
+    "icono": "🍺",
+    "descripcion": "La cerveza de los peruanos. Botella retornable 620 ml."
+  },
+  {
+    "id": 2,
+    "nombre": "Pilsen Callao 620 ml",
+    "categoria": "Cerveza",
+    "precio": 3.20,
+    "stock": 95,
+    "icono": "🍻",
+    "descripcion": "Auténtica cerveza tradicional, sabor balanceado y refrescante."
+  },
+  {
+    "id": 3,
+    "nombre": "Cusqueña Dorada 620 ml",
+    "categoria": "Cerveza",
+    "precio": 4.10,
+    "stock": 70,
+    "icono": "🌾",
+    "descripcion": "100% pura malta y lúpulos selectos Saaz. Cerveza premium."
+  },
+  {
+    "id": 4,
+    "nombre": "San Mateo 600 ml",
+    "categoria": "Aguas",
+    "precio": 1.80,
+    "stock": 150,
+    "icono": "💧",
+    "descripcion": "Agua mineral de manantial natural envasada en origen."
+  },
+  {
+    "id": 5,
+    "nombre": "Guaraná Backus 500 ml",
+    "categoria": "Gaseosas",
+    "precio": 2.20,
+    "stock": 110,
+    "icono": "🥤",
+    "descripcion": "Gaseosa energética natural elaborada con extracto de guaraná."
+  },
+  {
+    "id": 6,
+    "nombre": "Maltin Power 330 ml",
+    "categoria": "Maltas",
+    "precio": 2.50,
+    "stock": 85,
+    "icono": "⚡",
+    "descripcion": "Malta sin alcohol fortificada con vitaminas del complejo B y hierro."
+  }
+]

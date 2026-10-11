@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="gradBackus" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D32F2F"/>
+      <stop offset="100%" stop-color="#9A0007"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE082"/>
+      <stop offset="100%" stop-color="#FFB300"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#gradBackus)"/>
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#goldGrad)" stroke-width="8" stroke-dasharray="16,8"/>
+  <path d="M160 210 L256 140 L352 210 L320 310 L192 310 Z" fill="url(#goldGrad)"/>
+  <text x="256" y="270" font-family="'Segoe UI', Roboto, sans-serif" font-size="82" font-weight="900" fill="#9A0007" text-anchor="middle">B</text>
+  <text x="256" y="380" font-family="'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#FFFFFF" letter-spacing="4" text-anchor="middle">BACKUS</text>
+  <text x="256" y="415" font-family="'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" fill="#FFE082" letter-spacing="2" text-anchor="middle">VENTAS PWA</text>
+</svg>

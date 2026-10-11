@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Backus Ventas B2B | PWA Angular 19 & Runtime Caching</title>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BackusVentas">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="/css/sweetalert2.min.css">
+
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- CABECERA PRINCIPAL EMPRESARIAL -->
+        <header class="top-bar">
+            <div class="brand">
+                <div class="brand-logo-badge">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-title-row">
+                        <span class="brand-company">BACKUS</span>
+                        <span class="brand-badge-b2b">VENTAS B2B</span>
+                    </div>
+                    <span class="brand-sub">RUTA PREVENTA LIMA • ANGULAR 19 NGSW</span>
+                </div>
+            </div>
+            
+            <div class="top-actions">
+                <button id="netStatusBtn" class="status-pill status-online" title="Alternar simulación de conexión">
+                    <span class="status-dot" id="netStatusDot"></span>
+                    <span id="netStatusText">En Línea</span>
+                </button>
+                <a href="/portal.html" class="btn-icon-link" title="Ir al Portal de Auditoría Técnica">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- AVISO VISUAL DE CONEXIÓN CON ICONOS SVG (MINIMALISTA) -->
+        <div id="connectionNotice" class="connection-notice notice-online" role="alert">
+            <div class="notice-icon-box" id="noticeIconContainer">
+                <!-- SVG Icon Online -->
+                <svg id="iconWifiOnline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                    <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                </svg>
+                <!-- SVG Icon Offline -->
+                <svg id="iconWifiOffline" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+                    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+                    <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+                    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+                    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                    <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                </svg>
+            </div>
+            <div class="notice-body">
+                <div class="notice-header-row">
+                    <h4 class="notice-title" id="noticeTitle">Conexión Activa con Almacén Central</h4>
+                    <span class="notice-tag" id="noticeBadge">En Línea</span>
+                </div>
+                <p class="notice-desc" id="noticeDesc">
+                    Fuerza de ventas conectada a red. Precios y stock sincronizados en tiempo real mediante estrategia Freshness.
+                </p>
+            </div>
+            <button id="btnToggleSimulateNet" class="btn-toggle-net">
+                Simular Offline
+            </button>
+        </div>
+
+        <!-- PANEL DE AUDITORÍA RUNTIME CACHING (EVIDENCIAS TALLER 2) -->
+        <section class="diagnostic-panel">
+            <div class="diag-header">
+                <div class="diag-title-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>CONFIGURACIÓN RUNTIME CACHING (NGSW-CONFIG.JSON)</span>
+                </div>
+                <span class="diag-time" id="diagTimeLabel">Latencia: 14 ms</span>
+            </div>
+            
+            <div class="diag-grid">
+                <div class="diag-card" id="cardSwInfo">
+                    <div class="diag-label">SERVICE WORKER</div>
+                    <div class="diag-val ok" id="swStatusText">ngsw-worker.js Activo</div>
+                    <div class="diag-meta">Scope: / | HTTP 200 Interceptado</div>
+                </div>
+
+                <div class="diag-card" id="cardPerfInfo">
+                    <div class="diag-label">GRUPO: CATÁLOGO</div>
+                    <div class="diag-val ok">Estrategia: Performance</div>
+                    <div class="diag-meta">/data/catalogo.json | MaxAge: 1d</div>
+                </div>
+
+                <div class="diag-card" id="cardFreshInfo">
+                    <div class="diag-label">GRUPO: PRECIOS & STOCK</div>
+                    <div class="diag-val blue">Estrategia: Freshness</div>
+                    <div class="diag-meta">/data/precios.json | Timeout: 3s</div>
+                </div>
+
+                <div class="diag-card" id="cardIdbInfo">
+                    <div class="diag-label">ALMACÉN OFFLINE</div>
+                    <div class="diag-val" id="offlineOrdersLabel">IndexedDB: 0 Órdenes</div>
+                    <div class="diag-meta">BackusVentasDB / Cola de Preventa</div>
+                </div>
+            </div>
+
+            <div class="diag-actions-bar">
+                <button class="btn-diag-action" id="btnShowSwalDetails">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Auditar Caching
+                </button>
+                <button class="btn-diag-action" id="btnShowIdbList">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                    </svg>
+                    Ver Cola IndexedDB
+                </button>
+                <button class="btn-diag-action" id="btnTestSwalOffline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Refrescar Datos
+                </button>
+            </div>
+        </section>
+
+        <!-- FILTROS Y BÚSQUEDA -->
+        <section class="controls-section">
+            <div class="search-box">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Filtrar por SKU o nombre de bebida..." class="search-input">
+                <button id="clearSearchBtn" class="clear-btn" style="display: none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="categories-container" id="categoryTabs">
+                <button class="cat-pill active" data-cat="TODAS">Todos los Productos</button>
+                <button class="cat-pill" data-cat="Cerveza">Cervezas</button>
+                <button class="cat-pill" data-cat="Aguas">Aguas Minerales</button>
+                <button class="cat-pill" data-cat="Gaseosas">Bebidas Gasificadas</button>
+                <button class="cat-pill" data-cat="Maltas">Bebidas de Malta</button>
+            </nav>
+        </section>
+
+        <!-- CATÁLOGO DE PRODUCTOS -->
+        <main class="products-section">
+            <div class="section-header">
+                <div>
+                    <h3 id="categoryTitle" class="section-title">Portafolio Oficial Backus</h3>
+                    <p class="section-subtitle">Precios sugeridos por caja para canal tradicional</p>
+                </div>
+                <span class="product-count-badge" id="productCountLabel">6 productos</span>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Llenado dinámico mediante app.js -->
+            </div>
+        </main>
+
+        <!-- BARRA INFERIOR DE PREVENTA -->
+        <div class="thumb-wrapper" id="thumbWrapper" style="display: none;">
+            <footer class="thumb-bar">
+                <div class="cart-summary">
+                    <span class="cart-label" id="thumbItemsLabel">TOTAL PREVENTA (0 CAJAS)</span>
+                    <span class="cart-total" id="thumbTotalText">S/ 0.00</span>
+                </div>
+
+                <button class="btn-open-cart" id="btnOpenCart">
+                    <span class="cart-badge" id="thumbBadge">0</span>
+                    <span>Revisar Preventa</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE CHECKOUT Y REGISTRO DE PEDIDO -->
+    <div class="modal-overlay" id="cartModalOverlay">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            
+            <div class="sheet-header">
+                <div>
+                    <h3 class="sheet-title">Resumen de Preventa B2B</h3>
+                    <span class="sheet-subtitle">Ruta Preventa #104 • Lima Este</span>
+                </div>
+                <button class="btn-close-sheet" id="btnCloseCartModal">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="bodega-input-box">
+                <label class="input-label" for="bodegaNameInput">PUNTO DE VENTA / BODEGA:</label>
+                <input type="text" id="bodegaNameInput" class="minimal-input" value="Bodega San Martín - San Juan de Lurigancho">
+            </div>
+
+            <div class="cart-items-list" id="cartItemsContainer">
+                <!-- Llenado por app.js -->
+            </div>
+
+            <div class="cart-totals">
+                <div class="totals-row">
+                    <span>Subtotal Venta</span>
+                    <span id="cartSubtotalText">S/ 0.00</span>
+                </div>
+                <div class="totals-row">
+                    <span>I.G.V. (18%)</span>
+                    <span id="cartIgvText">S/ 0.00</span>
+                </div>
+                <div class="totals-row grand">
+                    <span>Total Facturación</span>
+                    <span id="cartTotalText">S/ 0.00</span>
+                </div>
+            </div>
+
+            <button class="btn-checkout" id="btnConfirmOrder">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span id="btnCheckoutText">Confirmar Pedido a Central Backus</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/js/sweetalert2.all.min.js"></script>
+    <script src="/js/idb.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

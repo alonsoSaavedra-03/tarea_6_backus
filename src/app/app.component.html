@@ -1,0 +1,224 @@
+<div class="app-layout">
+  
+  <!-- CABECERA PRINCIPAL -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="brand-avatar">🍺</div>
+      <div class="brand-text">
+        <h1>Backus Ventas</h1>
+        <span class="brand-sub">ANGULAR 19 • RUNTIME CACHING</span>
+      </div>
+    </div>
+    
+    <div class="top-actions">
+      <!-- Píldora de estado de red -->
+      <button class="status-pill" [ngClass]="esConexionReal ? 'status-online' : 'status-offline'" 
+              (click)="toggleSimulacionOffline()" title="Alternar simulación de conexión">
+        <span class="status-dot"></span>
+        <span>{{ esConexionReal ? 'En línea' : 'Sin conexión' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- AVISO VISUAL DE CONEXIÓN (ONLINE Y OFFLINE) -->
+  <div class="connection-notice" [ngClass]="esConexionReal ? 'notice-online' : 'notice-offline'" role="alert">
+    <div class="notice-icon-wrap">
+      <span class="notice-pulse-dot"></span>
+    </div>
+    <div class="notice-body">
+      <div class="notice-header-row">
+        <h4 class="notice-title">{{ esConexionReal ? 'Conexión Activa' : 'Modo Sin Conexión' }}</h4>
+        <span class="notice-badge">{{ esConexionReal ? 'En línea' : 'Offline' }}</span>
+      </div>
+      <p class="notice-desc">
+        {{ esConexionReal 
+            ? 'Fuerza de ventas conectada. Precios y stock actualizados en tiempo real mediante estrategia Freshness.' 
+            : 'Sin señal de red en ruta. Catálogo disponible desde Cache Storage (Performance). Los pedidos se guardarán en IndexedDB.' }}
+      </p>
+    </div>
+    <button class="notice-action-btn" (click)="toggleSimulacionOffline()">
+      {{ esConexionReal ? 'Simular Offline' : 'Reconectar' }}
+    </button>
+  </div>
+
+  <!-- PANEL DE DIAGNÓSTICO RUNTIME CACHING (EVIDENCIAS TÉCNICAS TALLER 2) -->
+  <section class="diagnostic-panel">
+    <div class="diag-header">
+      <span>🛠️ AUDITORÍA ANGULAR SERVICE WORKER & CACHE STORAGE</span>
+      <span class="diag-time">{{ tiempoRespuestaMs }} ms</span>
+    </div>
+    
+    <div class="diag-grid">
+      <div class="diag-card">
+        <span class="diag-label">SERVICE WORKER</span>
+        <strong class="diag-val" [class.ok]="swActivo">
+          {{ swActivo ? '🟢 ngsw-worker.js Activo' : '⚪ Standalone / Local' }}
+        </strong>
+      </div>
+
+      <div class="diag-card">
+        <span class="diag-label">DATA GROUP: CATÁLOGO</span>
+        <strong class="diag-val ok">⚡ Strategy: performance</strong>
+        <span class="diag-meta">URLs: /data/catalogo.json · 1d</span>
+      </div>
+
+      <div class="diag-card">
+        <span class="diag-label">DATA GROUP: PRECIOS</span>
+        <strong class="diag-val blue">🔄 Strategy: freshness</strong>
+        <span class="diag-meta">URLs: /data/precios.json · Timeout: 3s</span>
+      </div>
+
+      <div class="diag-card">
+        <span class="diag-label">OFFLINE STORAGE</span>
+        <strong class="diag-val" [class.ok]="pedidosPendientes.length === 0">
+          📦 {{ pedidosPendientes.length }} en IndexedDB
+        </strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSCADOR & FILTROS DE CATEGORÍAS -->
+  <section class="controls-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="busqueda" placeholder="Buscar cerveza, agua, gaseosa o malta..." 
+             class="search-input">
+      <button *ngIf="busqueda" (click)="busqueda = ''" class="clear-btn">✕</button>
+    </div>
+
+    <nav class="categories-container">
+      <button class="cat-pill" [class.active]="categoriaSeleccionada === 'TODAS'" 
+              (click)="categoriaSeleccionada = 'TODAS'">Todas las Bebidas</button>
+      <button class="cat-pill" [class.active]="categoriaSeleccionada === 'Cerveza'" 
+              (click)="categoriaSeleccionada = 'Cerveza'">🍺 Cervezas</button>
+      <button class="cat-pill" [class.active]="categoriaSeleccionada === 'Aguas'" 
+              (click)="categoriaSeleccionada = 'Aguas'">💧 Aguas de Manantial</button>
+      <button class="cat-pill" [class.active]="categoriaSeleccionada === 'Gaseosas'" 
+              (click)="categoriaSeleccionada = 'Gaseosas'">🥤 Gaseosas</button>
+      <button class="cat-pill" [class.active]="categoriaSeleccionada === 'Maltas'" 
+              (click)="categoriaSeleccionada = 'Maltas'">⚡ Maltas</button>
+    </nav>
+  </section>
+
+  <!-- CATÁLOGO DE PRODUCTOS -->
+  <main class="products-section">
+    <div class="section-header">
+      <h3>Catálogo de Preventa Bodegas</h3>
+      <span class="section-sub">{{ productosFiltrados.length }} productos listados</span>
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let prod of productosFiltrados">
+        
+        <div class="product-thumb">
+          <span class="prod-icon">{{ prod.icono || '🍺' }}</span>
+          <span class="stock-badge" [class.low-stock]="(prod.stockActualizado || prod.stock) < 80">
+            Stock: {{ prod.stockActualizado || prod.stock }} cajas
+          </span>
+        </div>
+
+        <div class="product-body">
+          <span class="prod-category">{{ prod.categoria }}</span>
+          <h4 class="product-title">{{ prod.nombre }}</h4>
+          <p class="product-desc">{{ prod.descripcion }}</p>
+
+          <div class="caching-badge" [ngClass]="esConexionReal ? 'badge-freshness' : 'badge-performance'">
+            <span>{{ esConexionReal ? '🔄 Precio validado por red (Freshness)' : '⚡ Precio desde caché local (Performance)' }}</span>
+          </div>
+
+          <div class="product-footer">
+            <div class="price-wrap">
+              <span class="price-label">PRECIO BODEGA</span>
+              <span class="product-price">S/ {{ (prod.precioActualizado || prod.precio).toFixed(2) }}</span>
+            </div>
+
+            <button class="btn-add-item" (click)="agregarAlCarrito(prod)" title="Añadir a la orden de venta">
+              +
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- THUMB ZONE BARRA FLOTANTE DEL CARRITO -->
+  <div class="thumb-wrapper" *ngIf="totalItemsCarrito > 0">
+    <footer class="thumb-bar">
+      <div class="cart-summary">
+        <span class="cart-label">TOTAL PREVENTA ({{ totalItemsCarrito }} CAJAS)</span>
+        <span class="cart-total">S/ {{ totalCarrito.toFixed(2) }}</span>
+      </div>
+
+      <button class="btn-open-cart" (click)="modalCarritoVisible = true">
+        <span class="cart-badge">{{ totalItemsCarrito }}</span>
+        <span>Ver Orden</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </footer>
+  </div>
+
+  <!-- MODAL DE CHECKOUT Y REGISTRO DE PEDIDO -->
+  <div class="modal-overlay" [class.active]="modalCarritoVisible">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      
+      <div class="sheet-header">
+        <div>
+          <h3>Confirmar Preventa Backus</h3>
+          <span class="sheet-subtitle">Ruta de distribución Lima Este</span>
+        </div>
+        <button class="btn-close-sheet" (click)="modalCarritoVisible = false">✕</button>
+      </div>
+
+      <div class="bodega-input-box">
+        <label class="input-label">PUNTO DE VENTA / BODEGA:</label>
+        <input type="text" [(ngModel)]="nombreBodega" class="minimal-input" placeholder="Nombre de la bodega o restaurante">
+      </div>
+
+      <div class="cart-items-list">
+        <div class="cart-item" *ngFor="let item of carrito; let i = index">
+          <div class="cart-item-info">
+            <h4>{{ item.producto.nombre }}</h4>
+            <span class="cart-item-price">S/ {{ (item.producto.precioActualizado || item.producto.precio).toFixed(2) }} c/u</span>
+          </div>
+
+          <div class="cart-item-actions">
+            <button class="btn-qty" (click)="cambiarCantidad(i, -1)">−</button>
+            <span class="qty-num">{{ item.cantidad }}</span>
+            <button class="btn-qty" (click)="cambiarCantidad(i, 1)">+</button>
+            <span class="item-subtotal">S/ {{ item.subtotal.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-totals">
+        <div class="totals-row">
+          <span>Subtotal</span>
+          <span>S/ {{ (totalCarrito / 1.18).toFixed(2) }}</span>
+        </div>
+        <div class="totals-row">
+          <span>I.G.V. (18%)</span>
+          <span>S/ {{ (totalCarrito - (totalCarrito / 1.18)).toFixed(2) }}</span>
+        </div>
+        <div class="totals-row grand">
+          <span>Total Factura</span>
+          <span>S/ {{ totalCarrito.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <button class="btn-checkout" [class.offline-mode]="!esConexionReal" (click)="confirmarPedido()">
+        <span>{{ esConexionReal ? '🚀 Emitir Pedido a Central Backus (En línea)' : '💾 Guardar Pedido en Cola Offline (IndexedDB)' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION FLOTANTE -->
+  <div class="toast-msg" [class.show]="toastVisible" [ngClass]="toastTipo">
+    <span class="toast-icon">{{ toastTipo === 'success' ? '✅' : (toastTipo === 'warning' ? '⚡' : 'ℹ️') }}</span>
+    <span class="toast-text">{{ toastMensaje }}</span>
+  </div>
+
+</div>

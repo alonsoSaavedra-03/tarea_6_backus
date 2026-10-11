@@ -1,0 +1,25 @@
+{
+  "name": "backus-ventas-pwa",
+  "version": "1.0.0",
+  "description": "Backus Ventas PWA - Angular 19 & Runtime Caching (SENATI Taller 2)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "angular",
+    "angular19",
+    "pwa",
+    "runtime-caching",
+    "ngsw",
+    "backus",
+    "senati"
+  ],
+  "author": "Alonso Stevens Saavedra Donayre",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.22.3",
+    "sweetalert2": "^11.26.25"
+  }
+}

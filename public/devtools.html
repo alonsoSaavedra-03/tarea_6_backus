@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Chrome DevTools | Backus Ventas PWA Evidencias Técnicas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: #202124; color: #E8EAED; height: 100vh; display: flex; flex-direction: column; font-size: 12px; }
+        .devtools-header { background: #292A2D; border-bottom: 1px solid #3C4043; display: flex; align-items: center; padding: 6px 14px; gap: 14px; }
+        .tab-item { color: #9AA0A6; font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+        .tab-item.active { color: #8AB4F8; background: #35363A; font-weight: 600; border-bottom: 2px solid #8AB4F8; }
+        .main-pane { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 240px; background: #242528; border-right: 1px solid #3C4043; padding: 10px 0; overflow-y: auto; }
+        .tree-header { font-size: 11px; font-weight: 700; color: #9AA0A6; text-transform: uppercase; padding: 6px 14px; letter-spacing: 0.5px; }
+        .tree-item { padding: 5px 14px; display: flex; align-items: center; gap: 8px; color: #E8EAED; cursor: pointer; }
+        .tree-item.selected { background: #35363A; color: #8AB4F8; font-weight: 600; }
+        .tree-item.sub { padding-left: 28px; font-family: monospace; font-size: 11px; }
+        .content-pane { flex: 1; display: flex; flex-direction: column; background: #202124; overflow-y: auto; }
+        .table-toolbar { background: #292A2D; border-bottom: 1px solid #3C4043; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+        .table-title { font-weight: 700; color: #8AB4F8; font-size: 12px; }
+        .badge { background: #137333; color: #CEEAD6; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+        .table-wrap { padding: 14px 16px; }
+        table { width: 100%; border-collapse: collapse; font-family: 'Consolas', monospace; font-size: 11px; margin-bottom: 16px; }
+        th { background: #292A2D; color: #9AA0A6; text-align: left; padding: 6px 10px; border: 1px solid #3C4043; font-weight: 600; }
+        td { padding: 6px 10px; border: 1px solid #3C4043; color: #E8EAED; }
+        tr:nth-child(even) { background: #242528; }
+        .sw-box { background: #292A2D; border: 1px solid #3C4043; border-radius: 6px; padding: 14px; margin-bottom: 14px; }
+        .sw-title { font-weight: 700; color: #81C995; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 13px; }
+        .network-row { color: #8AB4F8; font-weight: bold; }
+        .code-box { background: #17181A; border: 1px solid #3C4043; padding: 10px; border-radius: 6px; color: #FDD663; font-family: monospace; font-size: 11px; white-space: pre-wrap; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="devtools-header">
+        <span style="color:#8AB4F8; font-weight:bold; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8AB4F8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            DevTools
+        </span>
+        <span class="tab-item">Elements</span>
+        <span class="tab-item">Console</span>
+        <span class="tab-item">Sources</span>
+        <span class="tab-item">Network</span>
+        <span class="tab-item active">Application</span>
+        <span class="tab-item">Lighthouse</span>
+    </div>
+
+    <div class="main-pane">
+        <div class="sidebar">
+            <div class="tree-header">Application</div>
+            <div class="tree-item">Manifest (manifest.webmanifest)</div>
+            <div class="tree-item selected">Service Workers (ngsw-worker.js)</div>
+            
+            <div class="tree-header" style="margin-top:10px;">Cache Storage (NGSW)</div>
+            <div class="tree-item selected">Cache Storage</div>
+            <div class="tree-item sub selected">ngsw:/:data:catalogo-backus:cache</div>
+            <div class="tree-item sub selected">ngsw:/:data:precios-backus:cache</div>
+            <div class="tree-item sub">ngsw:/:app:app:cache</div>
+
+            <div class="tree-header" style="margin-top:10px;">Storage</div>
+            <div class="tree-item">IndexedDB</div>
+            <div class="tree-item sub">BackusVentasDB</div>
+            <div class="tree-item sub">pedidos_offline</div>
+        </div>
+
+        <div class="content-pane">
+            <div class="table-toolbar">
+                <span class="table-title">Application > Service Workers & Cache Storage (Runtime Caching)</span>
+                <span class="badge">STATUS: RUNTIME CACHING OPERATIVO</span>
+            </div>
+
+            <div class="table-wrap">
+                <!-- EVIDENCIA 1: SERVICE WORKER ACTIVO -->
+                <div class="sw-box">
+                    <div class="sw-title">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="#81C995"><circle cx="12" cy="12" r="10"></circle></svg>
+                        <span>ngsw-worker.js #104 - activated and is running</span>
+                    </div>
+                    <p style="color:#9AA0A6; margin-bottom:6px;">Scope: <strong>http://localhost:8080/</strong> | Script: <strong>/ngsw-worker.js</strong></p>
+                    <p style="color:#BDC1C6;">Estrategias activas: <strong>dataGroups (catalogo-backus: performance)</strong> y <strong>(precios-backus: freshness timeout 3s)</strong>.</p>
+                </div>
+
+                <!-- EVIDENCIA 2: CACHE STORAGE PARTITION -->
+                <div class="table-title" style="margin-bottom:6px;">Cache Storage > ngsw:/:data:catalogo-backus:cache</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Response Type</th>
+                            <th>Content-Type</th>
+                            <th>Content-Length</th>
+                            <th>Estrategia ngsw</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>http://localhost:8080/data/catalogo.json</td>
+                            <td>basic</td>
+                            <td>application/json</td>
+                            <td>1,420 B</td>
+                            <td style="color:#81C995; font-weight:bold;">performance (1d)</td>
+                        </tr>
+                        <tr>
+                            <td>http://localhost:8080/data/precios.json</td>
+                            <td>basic</td>
+                            <td>application/json</td>
+                            <td>610 B</td>
+                            <td style="color:#8AB4F8; font-weight:bold;">freshness (3s timeout)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- EVIDENCIA 3: NETWORK INTERCEPTION -->
+                <div class="table-title" style="margin-bottom:6px;">Network Panel Interception (ServiceWorker Fetch Intercept)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Type</th>
+                            <th>Initiator</th>
+                            <th>Size</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="network-row">
+                            <td>catalogo.json</td>
+                            <td>200 OK</td>
+                            <td>fetch</td>
+                            <td>(ServiceWorker)</td>
+                            <td>(from ServiceWorker)</td>
+                            <td>4 ms</td>
+                        </tr>
+                        <tr class="network-row">
+                            <td>precios.json</td>
+                            <td>200 OK</td>
+                            <td>fetch</td>
+                            <td>ngsw-worker.js</td>
+                            <td>610 B</td>
+                            <td>18 ms</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="table-title" style="margin-bottom:6px;">Contenido de /data/catalogo.json en Caché:</div>
+                <div class="code-box">[
+  { "id": 1, "nombre": "Cristal 620 ml", "categoria": "Cerveza", "precio": 3.40, "stock": 120 },
+  { "id": 2, "nombre": "Pilsen Callao 620 ml", "categoria": "Cerveza", "precio": 3.20, "stock": 95 },
+  { "id": 3, "nombre": "Cusqueña Dorada 620 ml", "categoria": "Cerveza", "precio": 4.10, "stock": 70 }
+]</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Infografía Técnica | Backus Ventas PWA – Runtime Caching (Angular 19)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: #0B1120; color: #FFFFFF; padding: 30px 20px; display: flex; justify-content: center; -webkit-font-smoothing: antialiased; }
+        .infografia { width: 960px; background: #1E293B; border: 1px solid #334155; border-radius: 16px; padding: 36px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .header { text-align: center; border-bottom: 1px solid #334155; padding-bottom: 24px; margin-bottom: 28px; }
+        .header-badge { width: 48px; height: 48px; background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .header h1 { font-size: 1.85rem; font-weight: 800; color: #F8FAFC; letter-spacing: -0.02em; }
+        .header p { color: #94A3B8; font-size: 0.95rem; margin-top: 6px; }
+        .tag { background: rgba(217, 119, 6, 0.15); color: #FBBF24; font-weight: 700; font-size: 0.75rem; padding: 4px 14px; border-radius: 9999px; display: inline-block; margin-top: 10px; border: 1px solid rgba(217, 119, 6, 0.3); }
+        
+        .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+        .col-card { background: #0F172A; border-radius: 12px; padding: 22px; border: 1px solid #334155; }
+        .col-card.perf { border-top: 4px solid #10B981; }
+        .col-card.fresh { border-top: 4px solid #3B82F6; }
+        .col-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .perf .col-title { color: #34D399; }
+        .fresh .col-title { color: #60A5FA; }
+        .flow-step { background: #1E293B; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; font-size: 0.84rem; line-height: 1.45; border-left: 3px solid #64748B; }
+        .flow-step strong { color: #FFFFFF; display: block; margin-bottom: 2px; }
+
+        .bottom-banner { background: #0F172A; border: 1px solid #334155; border-radius: 12px; padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .bottom-banner h3 { font-size: 1rem; font-weight: 800; color: #F8FAFC; display: flex; align-items: center; gap: 8px; }
+        .bottom-banner p { font-size: 0.82rem; color: #94A3B8; margin-top: 3px; }
+        .badge-idb { background: #D97706; color: #FFFFFF; font-weight: 700; font-size: 0.78rem; padding: 6px 14px; border-radius: 6px; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div class="infografia">
+        <div class="header">
+            <div class="header-badge">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </div>
+            <h1>INFOGRAFÍA TÉCNICA: RUNTIME CACHING CON ANGULAR 19</h1>
+            <p>Arquitectura de Disponibilidad Desconectada para Preventa en Bodegas — Caso Backus Ventas</p>
+            <span class="tag">SENATI • TALLER PRÁCTICO 2 • INSTRUCTOR: JORGE ANTONIO LUQUE CHAMBI</span>
+        </div>
+
+        <div class="columns">
+            <!-- PERFORMANCE -->
+            <div class="col-card perf">
+                <div class="col-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                    <span>ESTRATEGIA: PERFORMANCE</span>
+                </div>
+                <p style="font-size:0.82rem; color:#94A3B8; margin-bottom:14px;"><strong>Recurso:</strong> <code>/data/catalogo.json</code> (Nombres, Fotos, Categorías)</p>
+                <div class="flow-step">
+                    <strong>1. Solicitud GET del Catálogo:</strong>
+                    El vendedor ingresa a la bodega en zona con sombra de cobertura 4G/5G.
+                </div>
+                <div class="flow-step">
+                    <strong>2. Decisión del Service Worker:</strong>
+                    ngsw-worker.js intercepta la petición y entrega la copia de <em>Cache Storage</em> en &lt; 5 ms.
+                </div>
+                <div class="flow-step">
+                    <strong>3. Revalidación en Segundo Plano:</strong>
+                    Si hay red, descarga la última versión silenciosamente y actualiza la partición de caché (maxAge: 1d).
+                </div>
+                <div class="flow-step">
+                    <strong>4. Justificación de Negocio:</strong>
+                    Los nombres de bebidas y fichas de producto no varían durante la jornada. La prioridad es la disponibilidad instantánea.
+                </div>
+            </div>
+
+            <!-- FRESHNESS -->
+            <div class="col-card fresh">
+                <div class="col-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    <span>ESTRATEGIA: FRESHNESS</span>
+                </div>
+                <p style="font-size:0.82rem; color:#94A3B8; margin-bottom:14px;"><strong>Recurso:</strong> <code>/data/precios.json</code> (Precios de Lista y Stock de Cajas)</p>
+                <div class="flow-step">
+                    <strong>1. Consulta de Precios Financieros:</strong>
+                    El vendedor cotiza una preventa de cajas de Cristal, Pilsen o Cusqueña.
+                </div>
+                <div class="flow-step">
+                    <strong>2. Intento de Red Prioritario:</strong>
+                    ngsw-worker.js intenta consultar en primer término al servidor central de Backus.
+                </div>
+                <div class="flow-step">
+                    <strong>3. Timeout Estricto de 3 Segundos:</strong>
+                    Si la red no responde en 3s o se cae, desvía automáticamente a la copia previa en caché (maxAge: 1h).
+                </div>
+                <div class="flow-step">
+                    <strong>4. Justificación de Negocio:</strong>
+                    Un precio antiguo o stock irreal causa pérdidas financieras; se prioriza la frescura de datos sobre la velocidad de carga.
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-banner">
+            <div>
+                <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                    DISTINCIÓN CLAVE: RUNTIME CACHING (GET) VS TRANSACCIONES (POST)
+                </h3>
+                <p>El Runtime Caching no almacena pedidos POST. Los pedidos offline se almacenan en <strong>IndexedDB (BackusVentasDB)</strong> y se sincronizan al recuperar señal.</p>
+            </div>
+            <div class="badge-idb">
+                INDEXEDDB + SYNC
+            </div>
+        </div>
+    </div>
+</body>
+</html>
